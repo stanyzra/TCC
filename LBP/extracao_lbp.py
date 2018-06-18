@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Importar o OpenCV para abrir imagens e transformar para escala de cinza
 import cv2, os, re
 
@@ -7,7 +8,7 @@ from scipy.stats import itemfreq
 from skimage.feature import local_binary_pattern
 
 # Aqui você tem que definir o diretório completo com barra pra direita
-dir_origem = "C:/Users/Admin/Desktop/LBP/att_faces/"
+dir_origem = "/home/aluno/Área de Trabalho/LBP/att_faces/"
 #dir_origem = ("att_faces/")
 
 # Função para ordenar string e int
@@ -134,16 +135,18 @@ mostrei no Skype que tinha também linear e polinomial eu acho...)
 probability=True é só pra ver a % de certeza dele de cada imagem para
 cada classe
 '''
-# Importar o classificador SVM
+# Importar os classificadores
 from sklearn import svm, tree
+from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import GridSearchCV
 
 
 '''
 Variedade de classificadores interessantes que eu encontrei, porém apenas o 
-KNN e o SVM se destacam, os outros possuem uma taxa de acurácia extremamente 
+KNN e o SVM se destacaram, os outros possuem uma taxa de acurácia extremamente 
 baixa. Talvez seja viável pegar apenas os 3 melhores e deixar os outros de lado.
 '''
 # Criar o objeto
@@ -155,6 +158,13 @@ classificador_knn = KNeighborsClassifier(n_neighbors = 1)
 #classificador_mlpc = MLPClassifier(solver='lbfgs', alpha=1e-5,
 #                    hidden_layer_sizes=(5, 2), random_state=1)
 
+# Parâmetros para o GridSearch
+param_grid = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9],
+                     'C': [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]},
+                    {'kernel': ['linear'], 'gamma': [1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9],
+                     'C': [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]}]
+ 
+#clf = GridSearchCV(SVC(), param_grid)
 
 '''
 Depois vc precisa criar o modelo de aprendizagem, que é onde o classificador
@@ -164,15 +174,16 @@ classe de cada. Por isso que eu criei o train_label e coloquei a identificação
 da pessoa
 '''
 # Treina o modelo com os vetores de características e o rótulo (classe/identificador) de cada um
+#classificador_svm.fit(train_feat, train_label)
+
 classificador_knn.fit(train_feat, train_label)
-    
+
 '''
 Depois de criar um modelo de aprendizagem de máquima ele vai tentar classificar
 as seguites amostras...
 '''
 # Classifica cada amostra do seguinte vetor
 predict = classificador_knn.predict(test_feat)
-
 # Ele retorna a label que acha que é para cada uma das imagens
 print("Predict: ", predict)
 print("Rotulos de teste: ", test_label)
@@ -189,17 +200,29 @@ será mostrado na tela a posição do valor no vetor predict e a variável acert
 irá ser incrementada e mostrada junto com a porcentagem de acerto total.
 '''
 while(a < len(predict)):
-   
     
     if(predict[a] == test_label[a]):
         print("Posição do acerto do vetor: ", a) 
         acertos += 1 
-    
-     
+      
     a += 1
     
+print()
 print("Número de acertos: ", acertos)
 print("Porcentagem de acerto: ", ((acertos/len(predict))*100))
+
+# Mostra a porgentacem (máximo 1) de acerto para cada parâmetro passado
+print()
+#print("Porcentagem de acerto por parâmetro: ")
+#means = clf.cv_results_['mean_test_score']
+#stds = clf.cv_results_['std_test_score']
+#for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+#    print("%0.3f (+/-%0.03f) for %r"
+#              % (mean, std * 2, params))
+
+print()
+#print("Melhor parâmetro: ", clf.best_params_)
+
 #print(classificador_svm.predict_proba([[200,200]]))
  
 '''
