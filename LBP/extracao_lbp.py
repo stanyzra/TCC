@@ -8,7 +8,7 @@ from scipy.stats import itemfreq
 from skimage.feature import local_binary_pattern
 
 # Aqui você tem que definir o diretório completo com barra pra direita
-dir_origem = "/home/aluno/Área de Trabalho/LBP/att_faces/"
+dir_origem = "/home/aluno/Documentos/TCC/LBP/att_faces/"
 #dir_origem = ("att_faces/")
 
 # Função para ordenar string e int
@@ -152,7 +152,7 @@ baixa. Talvez seja viável pegar apenas os 3 melhores e deixar os outros de lado
 # Criar o objeto
 
 #classificador_svm = svm.SVC(kernel='rbf', probability=True)
-classificador_knn = KNeighborsClassifier(n_neighbors = 1)
+#classificador_knn = KNeighborsClassifier(n_neighbors = 1)
 #classificador_rfc = RandomForestClassifier(max_depth=2, random_state=0)
 #classificador_dtc = tree.DecisionTreeClassifier()
 #classificador_mlpc = MLPClassifier(solver='lbfgs', alpha=1e-5,
@@ -164,7 +164,7 @@ param_grid = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 
                     {'kernel': ['linear'], 'gamma': [1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9],
                      'C': [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]}]
  
-#clf = GridSearchCV(SVC(), param_grid)
+clf = GridSearchCV(SVC(), param_grid)
 
 '''
 Depois vc precisa criar o modelo de aprendizagem, que é onde o classificador
@@ -174,16 +174,15 @@ classe de cada. Por isso que eu criei o train_label e coloquei a identificação
 da pessoa
 '''
 # Treina o modelo com os vetores de características e o rótulo (classe/identificador) de cada um
-#classificador_svm.fit(train_feat, train_label)
+clf.fit(train_feat, train_label)
 
-classificador_knn.fit(train_feat, train_label)
 
 '''
 Depois de criar um modelo de aprendizagem de máquima ele vai tentar classificar
 as seguites amostras...
 '''
 # Classifica cada amostra do seguinte vetor
-predict = classificador_knn.predict(test_feat)
+predict = clf.predict(test_feat)
 # Ele retorna a label que acha que é para cada uma das imagens
 print("Predict: ", predict)
 print("Rotulos de teste: ", test_label)
@@ -213,17 +212,17 @@ print("Porcentagem de acerto: ", ((acertos/len(predict))*100))
 
 # Mostra a porgentacem (máximo 1) de acerto para cada parâmetro passado
 print()
-#print("Porcentagem de acerto por parâmetro: ")
-#means = clf.cv_results_['mean_test_score']
-#stds = clf.cv_results_['std_test_score']
-#for mean, std, params in zip(means, stds, clf.cv_results_['params']):
-#    print("%0.3f (+/-%0.03f) for %r"
-#              % (mean, std * 2, params))
+print("Porcentagem de acerto por parâmetro: ")
+means = clf.cv_results_['mean_test_score']
+stds = clf.cv_results_['std_test_score']
+for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+    print("%0.3f (+/-%0.03f) for %r"
+              % (mean, std * 2, params))
 
 print()
-#print("Melhor parâmetro: ", clf.best_params_)
+print("Melhor parâmetro: ", clf.best_params_)
 
-#print(classificador_svm.predict_proba([[200,200]]))
+#print(clf.predict_proba([[200,200]]))
  
 '''
 O resultado (essa variável "predict") é um vetor bem parecido com aquele
