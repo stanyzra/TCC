@@ -139,10 +139,9 @@ cada classe
 from sklearn import svm, tree
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
-
+from sklearn.ensemble import RandomForestClassifier
 
 '''
 Variedade de classificadores interessantes que eu encontrei, porém apenas o 
@@ -159,12 +158,14 @@ baixa. Talvez seja viável pegar apenas os 3 melhores e deixar os outros de lado
 #                    hidden_layer_sizes=(5, 2), random_state=1)
 
 # Parâmetros para o GridSearch
-param_grid = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9],
-                     'C': [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]},
-                    {'kernel': ['linear'], 'gamma': [1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9],
-                     'C': [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]}]
+#param_grid = [{'kernel': ['rbf'], 'gamma': [1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9],
+#                     'C': [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]},
+#                    {'kernel': ['linear'], 'gamma': [1e-3, 1e-4, 1e-5, 1e-6, 1e-7, 1e-8, 1e-9],
+#                     'C': [1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]}]
  
-clf = GridSearchCV(SVC(), param_grid)
+#clf = GridSearchCV(SVC(), param_grid)
+
+clf = RandomForestClassifier(n_estimators=5000, criterion="entropy", verbose=10, oob_score = True, n_jobs = -1, random_state=50, max_features = "auto")
 
 '''
 Depois vc precisa criar o modelo de aprendizagem, que é onde o classificador
@@ -211,16 +212,16 @@ print("Número de acertos: ", acertos)
 print("Porcentagem de acerto: ", ((acertos/len(predict))*100))
 
 # Mostra a porgentacem (máximo 1) de acerto para cada parâmetro passado
-print()
-print("Porcentagem de acerto por parâmetro: ")
-means = clf.cv_results_['mean_test_score']
-stds = clf.cv_results_['std_test_score']
-for mean, std, params in zip(means, stds, clf.cv_results_['params']):
-    print("%0.3f (+/-%0.03f) for %r"
-              % (mean, std * 2, params))
+#print()
+#print("Porcentagem de acerto por parâmetro: ")
+#means = clf.cv_results_['mean_test_score']
+#stds = clf.cv_results_['std_test_score']
+#for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+#    print("%0.3f (+/-%0.03f) for %r"
+#              % (mean, std * 2, params))
 
-print()
-print("Melhor parâmetro: ", clf.best_params_)
+#print()
+#print("Melhor parâmetro: ", clf.best_params_)
 
 #print(clf.predict_proba([[200,200]]))
  
