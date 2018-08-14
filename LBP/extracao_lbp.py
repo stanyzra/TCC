@@ -142,6 +142,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
+from sklearn import tree
 
 '''
 Variedade de classificadores interessantes que eu encontrei, porém apenas o 
@@ -165,7 +166,8 @@ baixa. Talvez seja viável pegar apenas os 3 melhores e deixar os outros de lado
  
 #clf = GridSearchCV(SVC(), param_grid)
 
-clf = RandomForestClassifier(n_estimators=5000, criterion="entropy", verbose=10, oob_score = True, n_jobs = -1, random_state=50, max_features = "auto")
+clf = RandomForestClassifier(n_estimators=2000, criterion="entropy", verbose=1, oob_score = True, n_jobs = -1, random_state=0)
+
 
 '''
 Depois vc precisa criar o modelo de aprendizagem, que é onde o classificador
